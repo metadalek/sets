@@ -4,7 +4,7 @@ Sets is a small utility for doing set operations
 on a set of strings provided on the command line
 or read from files.
 
-Its really only useful to experiences UNIX shell users
+Its really only useful to experienced UNIX shell users
 and is the sort of utility you do not know you need
 until you use it, then you cannot do without it.
 

@@ -1,0 +1,154 @@
+.TH SETS L "September 12, 2019" "" "Local"
+.SH NAME
+sets \- performs set operations on its arguments
+.SH SYNOPSIS
+.B sets
+[-benov] [-F sep] [-f output_file] [-1 file]... [-2 file]... [e1 e2 ...] [\-u|d|i|s|q] [-1 file]... [-2 file]... [e1 e2 ...]
+.br
+.SH DESCRIPTION
+.I Sets
+prints on the standard output stream the result of a
+single
+set operation on
+two sets of elements. The contents of the
+sets used may be provided on the command line
+or read from files or a combination of both.
+Sets are created as the options are processed.
+See USAGE below.
+.SH OPTIONS
+.TP
+\-b
+Use the basename (see basename(3))
+when performing element
+comparisons. The full element name is preserved
+for output. May be specified more than once. See \fIUSAGE\fR.
+.TP
+\-B
+Reverse a previous \fI-b\fR.
+May be specified more than once. See \fIUSAGE\fR.
+.TP
+\-e
+Ignore the last file name extension when performing
+element comparisons. The full element name is
+preserved for output.
+May be specified more than once. See \fIUSAGE\fR.
+.TP
+\-E
+Reverse a previous \fI-e\fR.
+May be specified more than once. See \fIUSAGE\fR.
+.TP
+\-F sep
+Use only the characters up to the delimiter
+when performing element comparisons.
+Must be a single character or the special
+string "null" in which case the entire
+element is used.
+May be specified more than once. See \fIUSAGE\fR.
+.TP
+\-n
+Print set elements seperated by a single space character rather than
+a newline. There is no trailing newline. Useful for scripts.
+.TP
+\-o
+Preserve the original order of the set elements in the output.
+Note this makes things run a bit slower due to having to perform
+multiple sort operations.
+.TP
+\-v
+Verbose. Print the sets after they have been populated
+showing the actual element and the element as it will be compared.
+If specfied more than once, additional output is generated
+while elements are being compared.
+.TP
+\-1 filename
+Read the set elements for the first set from the specified
+file. May be specified more than once. "-" refers to standard input.
+May be specified more than once. See \fIUSAGE\fR.
+.TP
+\-2 filename
+Read the set elements for the second set from the specified
+file. May be specified more than once. "-" refers to standard input.
+May be specified more than once. See \fIUSAGE\fR.
+.TP
+\-f output_filename
+Output list to specified filename. Can safely be the same name as an input
+filename.
+
+.SH "USAGE"
+.PP
+Both the sets start off being empty.
+.PP
+The options and arguments are processed in order
+as they are encountered on the command line.
+As elements are encountered they are added to set 1.
+If a set operator is encountered, subsequent elements
+are added to set 2. Options take effect as they are encountered.
+.PP
+Options for reading from files can occur anywhere.
+.PP
+After all options and arguments have been processed,
+the set operation is performewd on the sets and the results are
+printed.
+.PP
+Options which affect how elements are parsed take effect
+immediately for parsing subsequent elements.
+Thus its possible to treat how elememts are compared
+differently as the option list is processed.
+.PP
+If files are specified, set elements are read from
+the specified files and added to the appropriate set.
+Any number of files may be specified
+for each of the two sets.
+.PP
+Empty sets are allowed.
+.SH "EXAMPLES"
+.PP
+Grep for the word "fred" in all files in the current directory
+except object files and "a.out"
+
+grep fred `sets * -d *.o a.out`
+
+List all files that occur in both directory "otherdir"
+and the current directory.
+
+sets -b otherdir/* -i *
+
+Note that full pathnames are included in the output.
+As a result the relative position
+of the sets on the command line is significant.
+The above command will print all matching names with a leading "../".
+If the position of the sets is reversed only the base
+filenames will be printed.
+
+Show all users in the /etc/passwd file with no entry on the /etc/shadow
+file.
+
+sets -F : -1 /etc/passwd -2 /etc/shadow -d
+
+Note that is the above example was
+
+sets -1 /etc/passwd -F : -2 /etc/shadow -d
+
+it would not work since /etc/passwd would be added to set 1
+using the default delimiter, namely "null".
+.SH CAVEATS
+.PP
+The interaction of reading sets from files and specifying
+set elements on the command line takes a bit of getting used to.
+
+Only one set may be read from standard input.
+
+The size of the set elements and the number of
+elements in a set is only
+contrained by available memory and the largest number
+represented by a long integer.
+
+Because \fIsets\fR does not use a standard getopt(3)
+for parsing arguments, its handling of argments is
+primative. For example, you can not combine options into single string
+nor run the delimiter character up against the -F option.
+
+
+.SH "AUTHOR"
+.PP
+Chris Tweed (original idea), Peter Gray
